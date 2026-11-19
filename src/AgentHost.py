@@ -20,6 +20,7 @@ during the opponent's turn, and resumes it with SIGCONT.
 
 import importlib
 import json
+import operator
 import os
 import random
 import sys
@@ -113,10 +114,17 @@ def main():
         if type(m) is not Move:
             send({"bad": f"make_move returned {type(m).__name__}, not Move"})
             continue
-        if m.is_swap() and turn == 2:
+        # coordinates may be NumPy integers (the 2025 engine accepted them);
+        # operator.index accepts any integer type and refuses floats
+        try:
+            x, y = operator.index(m.x), operator.index(m.y)
+        except TypeError:
+            send({"bad": f"the move has coordinates that are not integers: {m.x!r}, {m.y!r}"})
+            continue
+        if x == -1 and y == -1 and turn == 2:
             # our own swap: we play the other colour from now on
             agent.colour = Colour.opposite(agent.colour)
-        send({"move": [m.x, m.y]})
+        send({"move": [x, y]})
     return 0
 
 
