@@ -79,6 +79,21 @@ class SubclassMoveAgent(QuickAgent):
         return SubclassMove(m.x, m.y)
 
 
+class NumpyMoveAgent(QuickAgent):
+    """Returns a Move with NumPy integers, as np.argwhere gives them."""
+
+    def make_move(self, turn, board, opp_move):
+        import numpy as np
+
+        r, c = np.argwhere(np.array([[t.colour is None for t in row] for row in board.tiles]))[0]
+        return Move(r, c)
+
+
+class FloatMoveAgent(QuickAgent):
+    def make_move(self, turn, board, opp_move):
+        return Move(0.0, 0.0)
+
+
 class PrintAgent(QuickAgent):
     def make_move(self, turn, board, opp_move):
         print("debug text on stdout")
@@ -185,6 +200,14 @@ class TestAgentProxy(unittest.TestCase):
 
     def test_move_subclass_is_rejected(self):
         p = self.proxy("SubclassMoveAgent")
+        self.assertIsNone(p.make_move(1, Board(11), None))
+
+    def test_numpy_integer_move(self):
+        p = self.proxy("NumpyMoveAgent")
+        self.assertEqual(p.make_move(1, Board(11), None), Move(0, 0))
+
+    def test_float_move_is_rejected(self):
+        p = self.proxy("FloatMoveAgent")
         self.assertIsNone(p.make_move(1, Board(11), None))
 
     def test_print_does_not_break_protocol(self):
