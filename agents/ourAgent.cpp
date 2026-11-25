@@ -118,3 +118,13 @@ private:
                                                     // SOMETHING SMARTER
   }
 };
+
+int main(int argc, char** argv) {
+    if (argc < 3) {
+        std::cerr << "usage: " << argv[0] << " <R|B> <boardSize>\n";
+        return 1;
+    }
+    Agent agent(argv[1], std::stoi(argv[2]));
+    agent.run();
+    return 0;
+}
