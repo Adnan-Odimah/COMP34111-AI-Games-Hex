@@ -1,0 +1,3 @@
+[submodule "mohex"]
+	path = third_party/mohex
+	url = https://github.com/hexanna1/benzene-vanilla-cmake.git
